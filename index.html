@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<head>
+  <title>Pusher Test</title>
+  <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const KEY = urlParams.get('key');
+    const cluster = urlParams.get('cluster');
+    const CHANNEL = urlParams.get('channel');
+    const EVENT = urlParams.get('event');
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+    var pusher = new Pusher(KEY, {
+      cluster
+    });
+
+    var channel = pusher.subscribe(CHANNEL);
+    channel.bind(EVENT, function (data) {
+      const message = document.getElementById('pusher-message')
+      message.insertAdjacentHTML('beforeend', `<div><code>${new Date().toISOString()} - ${JSON.stringify(data)}</code></div>`)
+    })
+  </script>
+</head>
+
+<body>
+  <h1>Pusher Test</h1>
+  <i>Init key and cluster via parameters. Example:https://pusher-test.com?key=123456&cluster=ap4&channel=kito&event=kibo</i>
+  <p>
+    Try publishing an event to channel with parameter is <code>channel</code>
+    with event parameter name is <code>event</code>.
+  </p>
+  <div id='pusher-message'>
+
+  </div>
+</body>
