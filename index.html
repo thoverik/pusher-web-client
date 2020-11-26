@@ -9,10 +9,20 @@
     const cluster = urlParams.get('cluster');
     const CHANNEL = urlParams.get('channel');
     const EVENT = urlParams.get('event');
+    const authEndpoint = urlParams.get('auth');
+    const clientId = urlParams.get('clientId');
+    const clientToken = urlParams.get('clientToken');
     // Enable pusher logging - don't include this in production
     Pusher.logToConsole = true;
     var pusher = new Pusher(KEY, {
-      cluster
+      cluster,
+      authEndpoint,
+      auth: {
+        headers: {
+          authorization: clientToken,
+          'x-linksys-client-type-id': clientId
+        }
+      }
     });
     var channel = pusher.subscribe(CHANNEL);
     channel.bind(EVENT, function (data) {
@@ -25,7 +35,8 @@
 <body>
   <h1>Pusher Test</h1>
   <div id='warning' style='color: red'>Please initialize pusher options!</div>
-  <i>Init key and cluster via parameters. Example:https://pusher-test.com?key=123456&cluster=ap4&channel=kito&event=kibo</i>
+  <i>Init key and cluster via parameters.
+    Example:https://pusher-test.com?key=123456&cluster=ap4&channel=kito&event=kibo</i>
   <p>
     Try publishing an event to channel with parameter is <code>channel</code>
     with event parameter name is <code>event</code>.
@@ -35,8 +46,8 @@
   </div>
   <script>
     const warning = document.getElementById('warning')
-    if(KEY && cluster && CHANNEL && EVENT){
-      warning.innerHTML =""
+    if (KEY && cluster && CHANNEL && EVENT) {
+      warning.innerHTML = ""
     }
   </script>
 </body>
